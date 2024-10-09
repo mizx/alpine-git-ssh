@@ -21,5 +21,15 @@ jobs:
       
       - name: Build Docker image
         run: |
-          docker build -t mizx/alpine-git-ssh .
-          docker push mizx/alpine-git-ssh
+          # Get the current Git commit hash
+          COMMIT_HASH=$(git rev-parse --short HEAD)
+
+          # Define image name
+          IMAGE_NAME="${{github.repository}}"
+
+          docker build -t "${IMAGE_NAME}:latest" -t "${IMAGE_NAME}:${COMMIT_HASH}" .
+
+      - name: Push Docker image
+        run: |
+          docker push ${IMAGE_NAME}:latest
+          docker push ${IMAGE_NAME}:${COMMIT_HASH}
